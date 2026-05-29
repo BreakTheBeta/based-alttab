@@ -59,16 +59,26 @@ class LicenseManager {
         return Self.lifetimeVariants.contains(variant)
     }
 
-    var isProAvailable: Bool { state.isProAvailable }
+    var isProAvailable: Bool {
+        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        return true
+        #else
+        return state.isProAvailable
+        #endif
+    }
 
     /// Pro features are locked out as soon as the license is no longer valid. Degradable Pro
     /// preferences are downgraded to their Free equivalents immediately via
     /// `ProTransitionManager.onProLockEngaged()`, wired to the state-change hook in App.swift.
     var isProLocked: Bool {
+        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        return false
+        #else
         switch state {
         case .pro, .trial: return false
         case .proExpired, .trialExpired: return true
         }
+        #endif
     }
 
     var trialStartDate: Date? {
@@ -174,6 +184,9 @@ class LicenseManager {
     }
 
     func computeState() -> LicenseState {
+        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        return .pro
+        #else
         if keychain.value(account: Self.keychainKeyAccount) != nil {
             let lastValidationResult = defaults.bool(forKey: "lastValidationResult")
             guard lastValidationResult else { return .trialExpired }
@@ -187,6 +200,7 @@ class LicenseManager {
             return .pro
         }
         return computeTrialState()
+        #endif
     }
 
     private func computeTrialState() -> LicenseState {
@@ -200,10 +214,14 @@ class LicenseManager {
     }
 
     func scheduleAsyncRevalidationIfNeeded() {
+        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        return
+        #else
         let lastValidation = defaults.double(forKey: "lastValidation")
         let elapsed = clock.now.timeIntervalSince1970 - lastValidation
         guard elapsed >= Self.revalidationInterval else { return }
         revalidateWithServer()
+        #endif
     }
 
     func revalidateWithServer() {
