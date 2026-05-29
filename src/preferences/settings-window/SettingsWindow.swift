@@ -478,7 +478,7 @@ class SettingsWindow: NSWindow {
         searchField.sendsWholeSearchString = true
         searchField.bezelStyle = .roundedBezel
         if #available(macOS 26.0, *) {
-            searchField.controlSize = .extraLarge
+            searchField.controlSize = .large
         } else if #available(macOS 13.0, *) {
             searchField.controlSize = .large
         }

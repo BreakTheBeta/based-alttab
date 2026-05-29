@@ -60,7 +60,7 @@ class LicenseManager {
     }
 
     var isProAvailable: Bool {
-        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        #if BASED
         return true
         #else
         return state.isProAvailable
@@ -71,7 +71,7 @@ class LicenseManager {
     /// preferences are downgraded to their Free equivalents immediately via
     /// `ProTransitionManager.onProLockEngaged()`, wired to the state-change hook in App.swift.
     var isProLocked: Bool {
-        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        #if BASED
         return false
         #else
         switch state {
@@ -184,7 +184,7 @@ class LicenseManager {
     }
 
     func computeState() -> LicenseState {
-        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        #if BASED
         return .pro
         #else
         if keychain.value(account: Self.keychainKeyAccount) != nil {
@@ -214,7 +214,7 @@ class LicenseManager {
     }
 
     func scheduleAsyncRevalidationIfNeeded() {
-        #if DEBUG && DISABLE_PREMIUM_CHECKS
+        #if BASED
         return
         #else
         let lastValidation = defaults.double(forKey: "lastValidation")

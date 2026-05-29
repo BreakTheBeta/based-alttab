@@ -8,7 +8,7 @@ class PermissionView: StackView {
     var status: NSTextField!
     var permissionStatus = PermissionStatus.notGranted
 
-    convenience init(_ symbol: Symbols, _ title: String, _ justification: String, _ buttonText: String, _ buttonUrl: String, _ skipCheckbox: NSView? = nil) {
+    convenience init(_ symbol: Symbols, _ title: String, _ justification: String, _ buttonText: String, _ buttonUrl: String, _ skipCheckbox: NSView? = nil, _ beforeOpen: (() -> Void)? = nil) {
         let iconImage = NSImage.fromSymbol(symbol, pointSize: 28)
         let icon = NSImageView(image: iconImage)
         if #available(macOS 10.14, *) { icon.contentTintColor = .systemBlue }
@@ -26,7 +26,10 @@ class PermissionView: StackView {
         justification.translatesAutoresizingMaskIntoConstraints = false
         justification.preferredMaxLayoutWidth = 500
         justification.addOrUpdateConstraint(justification.widthAnchor, justification.fittingSize.width + 5)
-        let button = Button(buttonText) { _ in NSWorkspace.shared.open(URL(string: buttonUrl)!) }
+        let button = Button(buttonText) { _ in
+            beforeOpen?()
+            NSWorkspace.shared.open(URL(string: buttonUrl)!)
+        }
         let status = NSTextField(wrappingLabelWithString: "")
         status.translatesAutoresizingMaskIntoConstraints = false
         let buttonStack = NSStackView(views: [button, status])

@@ -2,5 +2,6 @@
 
 #include "test-base.xcconfig"
 
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(ALT_TAB_EXTRA_SWIFT_CONDITIONS)
 DEBUG_INFORMATION_FORMAT = none  // we don't need dSYM files
 GCC_GENERATE_DEBUGGING_SYMBOLS = NO // we don't need dSYM files

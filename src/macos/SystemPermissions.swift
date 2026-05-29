@@ -130,6 +130,12 @@ class AccessibilityPermission {
 class ScreenRecordingPermission {
     static var status = PermissionStatus.notGranted
 
+    static func request() {
+        if #available(macOS 10.15, *) {
+            CGRequestScreenCaptureAccess()
+        }
+    }
+
     @discardableResult
     static func update() -> PermissionStatus {
         status = detect()
