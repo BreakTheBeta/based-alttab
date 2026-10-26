@@ -68,7 +68,6 @@
 "Bundle ID" = "Bundle ID";
 "Cancel" = "取消";
 "Capture windows in the background" = "在背景擷取視窗";
-"Check for updates now…" = "立即檢查更新…";
 "Check for updates periodically" = "定期檢查更新";
 "Check for updates…" = "檢查更新…";
 "Check permissions…" = "檢查權限…";
@@ -321,7 +320,6 @@
 "Unlock the Titles style with Pro" = "透過 Pro 解鎖「標題」樣式";
 "Up to 9 shortcuts" = "最多 9 個快速鍵";
 "Update now" = "立即更新";
-"Updates policy" = "更新政策";
 "Usage" = "使用情況";
 "Use App Icons" = "使用 App 圖像";
 "Use Titles" = "使用標題";

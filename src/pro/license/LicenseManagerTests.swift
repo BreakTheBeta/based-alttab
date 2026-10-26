@@ -23,6 +23,25 @@ final class LicenseManagerTests: XCTestCase {
         super.tearDown()
     }
 
+    func testUnrestrictedBuildNeverExpiresOrValidatesStoredLicense() {
+        let personal = LicenseManager(clock: clock, keychain: keychain, api: api, defaults: defaults, unrestricted: true)
+        keychain.setValue("existing-key", account: LicenseManager.keychainKeyAccount)
+        keychain.setValue("existing-instance", account: LicenseManager.keychainInstanceAccount)
+        defaults.set(false, forKey: "lastValidationResult")
+        personal.initialize()
+        XCTAssertEqual(personal.state, .pro)
+        XCTAssertTrue(personal.isLifetimeVariant)
+        clock.now = clock.now.addingTimeInterval(100 * 365 * 86400)
+        personal.refreshState()
+        personal.revalidateWithServer()
+        XCTAssertEqual(personal.state, .pro)
+        XCTAssertTrue(personal.isProAvailable)
+        XCTAssertFalse(personal.isProLocked)
+        XCTAssertTrue(api.validateCalls.isEmpty)
+        XCTAssertNil(defaults.object(forKey: "trialStartDate"))
+        XCTAssertEqual(keychain.value(account: LicenseManager.keychainKeyAccount), "existing-key")
+    }
+
     func testActivationCelebratesOnceButValidationAndRepeatedActivationDoNot() {
         manager.initialize()
         var celebrations = 0

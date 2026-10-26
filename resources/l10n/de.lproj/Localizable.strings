@@ -68,7 +68,6 @@
 "Bundle ID" = "Bundle ID";
 "Cancel" = "Abbrechen";
 "Capture windows in the background" = "Fenster im Hintergrund erfassen";
-"Check for updates now…" = "Jetzt nach Updates suchen…";
 "Check for updates periodically" = "Regelmäßig nach Updates suchen";
 "Check for updates…" = "Nach Updates suchen…";
 "Check permissions…" = "Berechtigungen prüfen…";
@@ -321,7 +320,6 @@
 "Unlock the Titles style with Pro" = "Stil Titel mit Pro freischalten";
 "Up to 9 shortcuts" = "Bis zu 9 Tastenkürzel";
 "Update now" = "Jetzt aktualisieren";
-"Updates policy" = "Update-Richtlinie";
 "Usage" = "Nutzung";
 "Use App Icons" = "App-Symbole verwenden";
 "Use Titles" = "Titel verwenden";

@@ -572,18 +572,7 @@ class App: AppCenterApplication {
         // Needs the AX runloop `BackgroundWork.start()` created, so it cannot go with the launch-time setup.
         AxObserverRegistry.shared.startRecoveryTicks()
         CliEvents.observe()
-        App.sparkleDelegate = SparkleDelegate()
-        App.updaterController = SPUStandardUpdaterController(
-            startingUpdater: false,
-            updaterDelegate: App.sparkleDelegate!,
-            userDriverDelegate: nil)
-        #if DEBUG
-        if !Preferences.qaPristine && !QaLifecycle.enabled {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 30) { App.updaterController?.startUpdater() }
-        }
-        #else
-        DispatchQueue.main.asyncAfter(deadline: .now() + 30) { App.updaterController?.startUpdater() }
-        #endif
+        // Upstream updates would replace the personal build with a gated release.
         PreferencesEvents.initialize()
         #if DEBUG
         BenchmarkRunner.startIfNeeded()
@@ -664,6 +653,7 @@ extension App: NSApplicationDelegate {
         WindowServerEvents.observe()
         AXUIElement.setGlobalTimeout()
         PreferencesPersistenceCheck.runInBackground()
+        ProBadgeView.hidden = LicenseManager.shared.unrestricted
         LicenseManager.shared.onActivationSucceeded = {
             DispatchQueue.main.async { ProActivationPopover.show() }
         }
@@ -673,7 +663,6 @@ extension App: NSApplicationDelegate {
         LicenseManager.shared.onStateChanged = { state in
             Menubar.refreshLicenseMenuItems()
             if !LicenseManager.shared.isMocked {
-                syncLicenseCookie(state: state)
                 ProTransitionManager.shared.onLicenseStateChanged()
             }
             UpgradeTab.refreshStatus()

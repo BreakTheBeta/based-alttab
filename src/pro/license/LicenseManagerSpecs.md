@@ -1,3 +1,9 @@
+## Personal build
+
+The application singleton uses `unrestricted: true`: all features resolve to Pro without a license key, version cutoff, trial start, or server revalidation. Existing keys are preserved. Injected managers default to the upstream behavior for tests. `testUnrestrictedBuildNeverExpiresOrValidatesStoredLicense` covers expiry and validation suppression.
+
+The app also hides Pro badges (`ProBadgeView.hidden`, set at launch so tests keep the upstream overlay), upgrade/support entries, and the updater UI; the matching update-policy strings are dropped from the catalogs.
+
 # LicenseManager — Specs
 
 > **Line coverage:** `LicenseManager.swift` 94.4% (373/395) · `RemoteLicenseClient.swift` 79.4% (189/238), measured 2026-10-21 with the Debug unit-test scheme and code coverage enabled.

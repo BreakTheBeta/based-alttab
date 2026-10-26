@@ -173,6 +173,9 @@ class ProBadgeView: NSView {
     /// duplicating the `NSLocalizedString` call.
     static let proLabel = NSLocalizedString("Pro", comment: "")
 
+    /// Set at launch for unrestricted builds; tests keep the default so they pin the upstream overlay.
+    static var hidden = false
+
     /// Bundle returned from `attach(to:segmentIndex:)`: the badge plus the icon and label
     /// overlays we render on top of the Pro segment. Callers store this to drive
     /// `refreshSelection` after click / window-key / Pro-lock transitions.
@@ -208,6 +211,9 @@ class ProBadgeView: NSView {
     /// Only valid for the LAST segment — the badge anchors to the control's trailing edge.
     @discardableResult
     static func attach(to segmentedControl: NSSegmentedControl, segmentIndex: Int, label: String, symbol: Symbols) -> SegmentOverlay {
+        let badge = ProBadgeView()
+        // Unrestricted builds keep AppKit's native segment; the detached overlay views absorb refreshes.
+        guard !badge.isHidden else { return SegmentOverlay(badge: badge, icon: NSImageView(), label: NSTextField()) }
         let selected = segmentedControl.selectedSegment == segmentIndex
         segmentedControl.setLabel("", forSegment: segmentIndex)
         segmentedControl.setImage(nil, forSegment: segmentIndex)
@@ -230,7 +236,6 @@ class ProBadgeView: NSView {
         textLabel.textColor = colorProvider()
         textLabel.lineBreakMode = .byTruncatingTail
         textLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        let badge = ProBadgeView()
         badge.setSelected(selected)
         segmentedControl.addSubview(iconView)
         segmentedControl.addSubview(textLabel)
@@ -295,6 +300,7 @@ class ProBadgeView: NSView {
         // when it spots a `ProBadgeView`, just without needing the walk to find it after.
         SettingsSearchIndex.registerString(ProBadgeView.proLabel)
         translatesAutoresizingMaskIntoConstraints = false
+        isHidden = Self.hidden
         wantsLayer = true
         layer?.cornerRadius = 4
         label.font = NSFont.systemFont(ofSize: 9, weight: .semibold)

@@ -20,7 +20,8 @@ class LicenseManager {
             clock: SystemClock(),
             keychain: keychain,
             api: RemoteLicenseClient(baseUrl: Endpoints.licenseApiBaseUrl, keychain: keychain),
-            defaults: UserDefaults(suiteName: defaultsSuiteName)!
+            defaults: UserDefaults(suiteName: defaultsSuiteName)!,
+            unrestricted: true
         )
     }()
 
@@ -37,6 +38,8 @@ class LicenseManager {
     /// When a Pro variant needs a cutoff, add: "variant_slug": "X.Y.Z".
     static let versionLimitedVariants: [String: String] = [:]
 
+    /// Personal builds enable every feature locally without activation or trial bookkeeping.
+    let unrestricted: Bool
     let clock: Clock
     let keychain: Keychain
     let api: LicenseAPI
@@ -79,6 +82,7 @@ class LicenseManager {
     }
 
     var isLifetimeVariant: Bool {
+        if unrestricted { return true }
         #if DEBUG
         if hasMockedLicense { return mockedVariant.map(Self.lifetimeVariants.contains) ?? false }
         #endif
@@ -137,7 +141,8 @@ class LicenseManager {
         return clock.now >= trialEndDate
     }
 
-    init(clock: Clock, keychain: Keychain, api: LicenseAPI, defaults: UserDefaults) {
+    init(clock: Clock, keychain: Keychain, api: LicenseAPI, defaults: UserDefaults, unrestricted: Bool = false) {
+        self.unrestricted = unrestricted
         self.clock = clock
         self.keychain = keychain
         self.api = api
@@ -166,6 +171,7 @@ class LicenseManager {
     }
 
     private func startTrialIfNeeded() {
+        guard !unrestricted else { return }
         guard appIsUsable, !isMocked, defaults.object(forKey: "trialStartDate") == nil,
               keychain.value(account: Self.keychainKeyAccount) == nil else { return }
         defaults.set(clock.now.timeIntervalSince1970, forKey: "trialStartDate")
@@ -253,6 +259,7 @@ class LicenseManager {
     }
 
     func computeState() -> LicenseState {
+        if unrestricted { return .pro }
         #if DEBUG
         if hasMockedLicense { return mockedTrialStartDate.map(trialState) ?? state }
         #endif
@@ -283,6 +290,7 @@ class LicenseManager {
     }
 
     func scheduleAsyncRevalidationIfNeeded() {
+        guard !unrestricted else { return }
         let lastValidation = defaults.double(forKey: "lastValidation")
         let elapsed = clock.now.timeIntervalSince1970 - lastValidation
         guard elapsed >= Self.revalidationInterval else { return }
@@ -290,6 +298,7 @@ class LicenseManager {
     }
 
     func revalidateWithServer() {
+        guard !unrestricted else { return }
         guard let licenseKey = keychain.value(account: Self.keychainKeyAccount),
               let instanceId = keychain.value(account: Self.keychainInstanceAccount) else { return }
         api.validate(licenseKey, instanceId: instanceId) { [weak self] result in

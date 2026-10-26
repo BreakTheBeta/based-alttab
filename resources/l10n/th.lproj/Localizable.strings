@@ -68,7 +68,6 @@
 "Bundle ID" = "Bundle ID";
 "Cancel" = "ยกเลิก";
 "Capture windows in the background" = "จับภาพหน้าต่างในเบื้องหลัง";
-"Check for updates now…" = "ตรวจหาอัปเดตทันที…";
 "Check for updates periodically" = "ตรวจหาอัปเดตเป็นระยะ";
 "Check for updates…" = "ตรวจหาอัปเดต…";
 "Check permissions…" = "ตรวจสอบสิทธิ์…";
@@ -321,7 +320,6 @@
 "Unlock the Titles style with Pro" = "ปลดล็อกสไตล์ชื่อด้วย Pro";
 "Up to 9 shortcuts" = "ทางลัดสูงสุด 9 ชุด";
 "Update now" = "อัปเดตทันที";
-"Updates policy" = "นโยบายการอัปเดต";
 "Usage" = "การใช้งาน";
 "Use App Icons" = "ใช้ไอคอนแอป";
 "Use Titles" = "ใช้ชื่อหน้าต่าง";
